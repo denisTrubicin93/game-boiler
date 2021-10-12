@@ -6,14 +6,20 @@ const arcadeSlice = createSlice({
   initialState,
   reducers: {
     setCoords: (state, action: PayloadAction<Coords>) => {
-      console.log('setCoords', action.payload);
       // if (state.coords) {
       //   state.coords = JSON.parse(JSON.stringify(action.payload));
       // }
       state.coords = action.payload;
     },
+    setPoints: (state, action: PayloadAction<number>) => {
+      // if (state.coords) {
+      //   state.coords = JSON.parse(JSON.stringify(action.payload));
+      // }
+      state.points = action.payload;
+      console.log('setPoints', state.points)
+    },
   },
 });
 
 export default arcadeSlice.reducer;
-export const { setCoords } = arcadeSlice.actions;
+export const { setCoords, setPoints } = arcadeSlice.actions;

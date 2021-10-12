@@ -1,12 +1,13 @@
 export const initialState = {
+  points: 0,
   coords: {
     event: 'arcade',
     x: 0,
     y: 0,
     w: 200,
     h: 200,
-  }
-}
+  },
+};
 
 export interface Coords {
   event: string;

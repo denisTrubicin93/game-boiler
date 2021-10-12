@@ -1,0 +1,9 @@
+*{
+  box-sizing: border-box;
+}
+
+@keyframes timerColor {
+  0% { background: #2dd141; }
+  50% { background: #deeb14; }
+  100% { background: #ff4242; }
+ }
