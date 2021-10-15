@@ -4,7 +4,8 @@
     "module": "CommonJS",
     "lib": [
       "dom",
-      "esnext"
+      "esnext",
+      "dom.Iterable"
     ],
     "declaration": true,
     "declarationMap": true,

@@ -8,7 +8,7 @@ function* messageHandler(action: ReturnType<typeof messageAction>) {
       case 'event':
         {
          const result = action.payload.result;
-          if (result.event === 'arcade') {
+          if (result.event === 'hands_detect') {
             yield put(setCoords(result));
           }
         }

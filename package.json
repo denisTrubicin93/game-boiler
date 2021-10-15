@@ -102,7 +102,7 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "denisTrubicin93",
+      "owner": "xenera",
       "repo": "game-boiler"
     }
   },

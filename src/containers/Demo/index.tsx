@@ -4,8 +4,7 @@ import { useHistory } from 'react-router-dom';
 import TotalArcade from './totalArcade';
 import { sendMessageAction } from '../../features/Websocket/reducer';
 import { setPoints } from '../../features/Arcade/reducer';
-// import Webcam from 'react-webcam';
-// import { styled } from '@mui/material/styles';
+import Webcam from 'react-webcam';
 import { Box, styled, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { RootState } from 'features';
@@ -13,16 +12,17 @@ import pokemonImg1 from './assets/pokemon_PNG112.png';
 import pokemonImg2 from './assets/pokemon_PNG125.png';
 import pokemonImg3 from './assets/pokemon_PNG150.png';
 
-// const videoConstraints = {
-//   width: 1280,
-//   height: 720,
-//   facingMode: 'user',
-// };
+const videoConstraints = {
+  width: 1920,
+  height: 1080,
+  facingMode: 'user',
+};
 const StatusBar = styled('div')({
   position: 'relative',
   // right: 0,
   // top: '-150px',
-  width: '1280px',
+  width: '1920px',
+
   height: '150px',
   // borderRadius: '50%',
   // border: '10px solid blue',
@@ -36,7 +36,7 @@ const StatusBar = styled('div')({
     border: '10px solid #000',
     background: '#ff4242', //#deeb14 #ff4242
     fontSize: '50px',
-    animation: 'timerColor 60s linear',
+    animation: 'timerColor 30s linear',
     '& .timerIcon': {
       fontSize: '65px',
       verticalAlign: 'bottom',
@@ -66,7 +66,7 @@ const StatusBar = styled('div')({
 const WebcamCapture = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  // const webcamRef = React.useRef(null);
+  const webcamRef = React.useRef(null);
 
   // const capture = React.useCallback(() => {
   //   // const imageSrc = webcamRef.current.getScreenshot();
@@ -91,7 +91,7 @@ const WebcamCapture = () => {
       setPokemon(() => {
         return {
           pokemonImage: pokemonList[Math.round(Math.random() * (pokemonList.length - 1))],
-          pokemonCoords: {x: Math.floor(1130 * Math.random()), y: Math.floor(570 * Math.random())}
+          pokemonCoords: {x: Math.floor((window.innerWidth - 150) * Math.random()), y: Math.floor(930 * Math.random())}
         }
       })
     }, 500);
@@ -107,21 +107,44 @@ const WebcamCapture = () => {
         yMax: y + 150,
       }
 
-      const ha = {
-        xMin: coords.x,
-        xMax: coords.x + coords.w,
-        yMin: coords.y,
-        yMax: coords.y + coords.h,
+      // const [hands] = coords.result;
+      // const [leftHand, rightHand] = hands;
+      // const [[xl1, yl1], [xl2, yl2]]: any[] = leftHand;
+      // const [[xr1, yr1], [xr2, yr2]]: any[] = rightHand;
+      const [leftHand, rightHand] = coords.result;
+      const [[xl1, yl1], [xl2, yl2]] = leftHand;
+      const [[xr1, yr1], [xr2, yr2]] = rightHand;
+
+      const hla = {
+        xMin: xl1,
+        xMax: xl2,
+        yMin: yl1,
+        yMax: yl2,
+      }
+      const hra = {
+        xMin: xr1,
+        xMax: xr2,
+        yMin: yr1,
+        yMax: yr2,
       }
 
       setCaught(() =>
-      ((ha.xMax > pa.xMax && pa.xMax > ha.xMin) && (ha.yMax > pa.yMax && pa.yMax > ha.yMin))
-      || (ha.xMax > pa.xMax && pa.xMax > ha.xMin && ha.yMax > pa.yMin && pa.yMin > ha.yMin)
-      || (ha.xMax > pa.xMin && pa.xMin > ha.xMin && ha.yMax > pa.yMax && pa.yMax > ha.yMin)
-      || (ha.xMax > pa.xMin && pa.xMin > ha.xMin && ha.yMax > pa.yMin && pa.yMin > ha.yMin)
+      ((hla.xMax > pa.xMax && pa.xMax > hla.xMin && hla.yMax > pa.yMax && pa.yMax > hla.yMin)
+      || (hla.xMax > pa.xMax && pa.xMax > hla.xMin && hla.yMax > pa.yMin && pa.yMin > hla.yMin)
+      || (hla.xMax > pa.xMin && pa.xMin > hla.xMin && hla.yMax > pa.yMax && pa.yMax > hla.yMin)
+      || (hla.xMax > pa.xMin && pa.xMin > hla.xMin && hla.yMax > pa.yMin && pa.yMin > hla.yMin))
+
+       || ((hra.xMax > pa.xMax && pa.xMax > hra.xMin && hra.yMax > pa.yMax && pa.yMax > hra.yMin)
+       || (hra.xMax > pa.xMax && pa.xMax > hra.xMin && hra.yMax > pa.yMin && pa.yMin > hra.yMin)
+       || (hra.xMax > pa.xMin && pa.xMin > hra.xMin && hra.yMax > pa.yMax && pa.yMax > hra.yMin)
+       || (hra.xMax > pa.xMin && pa.xMin > hra.xMin && hra.yMax > pa.yMin && pa.yMin > hra.yMin))
       )
     }
   }, [pokemon, coords])
+
+  const [leftHand, rightHand] = coords.result;
+  const [[xl1, yl1], [xl2, yl2]] = leftHand;
+  const [[xr1, yr1], [xr2, yr2]] = rightHand;
 
   useEffect(() => {
     if (caught){
@@ -136,7 +159,17 @@ const WebcamCapture = () => {
       setTimeout(() => {
         setSeconds(seconds - 1)
       }, 1000);
-    }else history.push('/total');
+    }else{
+      dispatch(
+        sendMessageAction({
+          to: 'pose',
+          message: {
+            cmd: 'hands_detect_stop',
+          },
+        })
+      )
+      history.push('/total');
+    }
 
   }, [seconds]);
 
@@ -145,21 +178,36 @@ const WebcamCapture = () => {
     // const secondTimer = setInterval(() => {
     //     setSeconds(seconds - 1);
     // }, 1000);
-    const timer = setInterval(() => {
-      dispatch(
-        sendMessageAction({
-          to: 'pose',
-          message: {
-            cmd: 'arcade_update',
-            result: { event: 'arcade', x: Math.floor(1080 * Math.random()), y: Math.floor(520 * Math.random()), w: 200, h: 200 },
-          },
-        })
-      );
-    }, 1000);
-    return () => {
-      // clearInterval(secondTimer);
-      clearInterval(timer);
-    }
+    // const timer = setInterval(() => {
+    //   const xlRnd = Math.floor((window.innerWidth - 150) * Math.random())
+    //   const ylRnd = Math.floor(930 * Math.random())
+    //   const xrRnd = Math.floor((window.innerWidth - 150) * Math.random())
+    //   const yrRnd = Math.floor(930 * Math.random())
+    //   dispatch(
+    //     // sendMessageAction({
+    //     //   to: 'pose',
+    //     //   message: {
+    //     //     cmd: 'arcade_update',
+    //     //     result: { event: 'arcade', x: Math.floor(1080 * Math.random()), y: Math.floor(520 * Math.random()), w: 200, h: 200 },
+    //     //   },
+    //     // })
+
+    //     sendMessageAction({
+    //       to: 'pose',
+    //       message: {
+    //         cmd: 'arcade_update',
+    //         result: { event: 'hands_detect',
+    //         result: [[[xlRnd,ylRnd],[xlRnd + 200,ylRnd + 200]],[[xrRnd,yrRnd],[xrRnd + 200,yrRnd + 200]]],
+    //         image: ''
+    //         },
+    //       },
+    //     })
+    //   );
+    // }, 1000);
+    // return () => {
+    //   // clearInterval(secondTimer);
+    //   clearInterval(timer);
+    // }
   }, []);
   return (
     <>
@@ -187,19 +235,30 @@ const WebcamCapture = () => {
         <Box
           sx={{
             position: 'relative',
-            width: '1280px',
-            height: '720px',
+            width: '1920px',
+            height: '1080px',
             bgcolor: 'blanchedalmond',
           }}
         >
           <Box
             sx={{
               position: 'absolute',
-              width: `${coords.w}px`,
-              height: `${coords.h}px`,
-              top: `${coords.y}px`,
-              left: `${coords.x}px`,
-              border: '3px solid #000',
+              width: `${xl2 - xl1}px`,
+              height: `${yl2 - yl1}px`,
+              top: `${yl1}px`,
+              left: `${xl1}px`,
+              border: '5px solid #fff',
+              transition: '.5s'
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              width: `${xr2 - xr1}px`,
+              height: `${yr2 - yr1}px`,
+              top: `${yr1}px`,
+              left: `${xr1}px`,
+              border: '5px solid #fff',
               transition: '.5s'
             }}
           />
@@ -228,14 +287,14 @@ const WebcamCapture = () => {
               left: '40%',
             }}
           /> */}
-          {/* <Webcam
+          <Webcam
             audio={false}
-            height={720}
+            height={1080}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            width={1280}
+            width={1920}
             videoConstraints={videoConstraints}
-          /> */}
+          />
         </Box>
         {/* <button onClick={capture}>Capture photo</button> */}
       </Box>
