@@ -49,7 +49,7 @@ const Home: React.FC = () => {
     <>
       <Box
         sx={{
-          width: '100vw',
+          width: window.innerWidth,
           height: '100vh',
           display: 'flex',
           justifyContent: 'center',

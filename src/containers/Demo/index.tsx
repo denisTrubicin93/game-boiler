@@ -21,7 +21,7 @@ const StatusBar = styled('div')({
   position: 'relative',
   // right: 0,
   // top: '-150px',
-  width: '1920px',
+  width: '100%',
 
   height: '150px',
   // borderRadius: '50%',
@@ -75,7 +75,7 @@ const WebcamCapture = () => {
   const { coords, points } = useSelector((state: RootState) => state.arcade);
   const [pokemon, setPokemon] = useState<null | any>(null);
   const [caught, setCaught] = useState<null | any>(null);
-  const [seconds, setSeconds] = useState(30);
+  const [seconds, setSeconds] = useState(300);
 
   const [pokemonOpacity, setPokemonOpacity] = useState<null | any>(1);
   const pokemonList = [
@@ -91,7 +91,7 @@ const WebcamCapture = () => {
       setPokemon(() => {
         return {
           pokemonImage: pokemonList[Math.round(Math.random() * (pokemonList.length - 1))],
-          pokemonCoords: {x: Math.floor((window.innerWidth - 150) * Math.random()), y: Math.floor(930 * Math.random())}
+          pokemonCoords: {x: Math.floor((document.body.clientWidth - 150) * Math.random()), y: Math.floor((((document.body.clientWidth/1920)*1080) - 150) * Math.random())}
         }
       })
     }, 500);
@@ -213,8 +213,8 @@ const WebcamCapture = () => {
     <>
       <Box
         sx={{
-          width: '100vw',
-          height: '100vh',
+          width: `${document.body.clientWidth}px`,
+          height: `100vh`,
           display: 'flex',
           justifyContent: 'center',
           flexDirection: 'column',
@@ -235,8 +235,8 @@ const WebcamCapture = () => {
         <Box
           sx={{
             position: 'relative',
-            width: '1920px',
-            height: '1080px',
+            width: '100%',
+            height: `${(document.body.clientWidth/1920)*1080}px`,
             bgcolor: 'blanchedalmond',
           }}
         >
@@ -289,10 +289,10 @@ const WebcamCapture = () => {
           /> */}
           <Webcam
             audio={false}
-            height={1080}
+            height={'100%'}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            width={1920}
+            width={'100%'}
             videoConstraints={videoConstraints}
           />
         </Box>
