@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import TotalArcade from './totalArcade';
 import { sendMessageAction } from '../../features/Websocket/reducer';
 import { setPoints } from '../../features/Arcade/reducer';
-import Webcam from 'react-webcam';
+// import Webcam from 'react-webcam';
 import { Box, styled, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { RootState } from 'features';
@@ -12,11 +12,11 @@ import pokemonImg1 from './assets/pokemon_PNG112.png';
 import pokemonImg2 from './assets/pokemon_PNG125.png';
 import pokemonImg3 from './assets/pokemon_PNG150.png';
 
-const videoConstraints = {
-  width: 1920,
-  height: 1080,
-  facingMode: 'user',
-};
+// const videoConstraints = {
+//   width: 1920,
+//   height: 1080,
+//   facingMode: 'user',
+// };
 const StatusBar = styled('div')({
   position: 'relative',
   // right: 0,
@@ -66,18 +66,53 @@ const StatusBar = styled('div')({
 const WebcamCapture = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const webcamRef = React.useRef(null);
+  const imgRef: any = useRef();
+  // const webcamRef = React.useRef(null);
 
-  // const capture = React.useCallback(() => {
-  //   // const imageSrc = webcamRef.current.getScreenshot();
-  // }, [webcamRef]);
-
+  const factorWidth = 1.6875;
+  useEffect(() => {
+    console.log(imgRef.current.naturalWidth, imgRef.current.naturalHeight)
+    // const imageSrc = webcamRef.current.getScreenshot();
+  }, [imgRef]);
   const { coords, points } = useSelector((state: RootState) => state.arcade);
   const [pokemon, setPokemon] = useState<null | any>(null);
+  const [pokemonReady, setPokemonReady] = useState(false)
   const [caught, setCaught] = useState<null | any>(null);
-  const [seconds, setSeconds] = useState(300);
+  const [seconds, setSeconds] = useState(30);
+  // const [base64, setBase64] = useState('');
+
+
+  // const capture = async () => {
+  //   const img = imgRef?.current as any;
+  //   // let base64: string = '';
+  //   if (img && img.src) {
+  //     const canvas = document.createElement('canvas');
+  //     canvas.width = img.width;
+  //     canvas.height = img.height;
+  //     const ctx = canvas.getContext('2d');
+  //     ctx!.drawImage(img,0,0,img.width,img.height);
+  //     // const dataURL = canvas.toDataURL()
+  //     console.log('source', ctx)
+  //   }
+  // }
+  // console.log(capture())
+  // useEffect(() => {
+  //   if(img){
+  //     console.log()
+  //     const canvas = document.createElement('canvas')
+  //     // canvas.width = img.
+  //   }
+  //   // const getFrameTimer = setInterval(() => {
+
+  //   //   console.log('image', img);
+  //   // },24)
+  //   // return () => {
+  //   //   clearInterval(getFrameTimer);
+  //   // }
+  // }, [base64])
 
   const [pokemonOpacity, setPokemonOpacity] = useState<null | any>(1);
+
   const pokemonList = [
     pokemonImg1,
     pokemonImg2,
@@ -91,14 +126,20 @@ const WebcamCapture = () => {
       setPokemon(() => {
         return {
           pokemonImage: pokemonList[Math.round(Math.random() * (pokemonList.length - 1))],
-          pokemonCoords: {x: Math.floor((document.body.clientWidth - 150) * Math.random()), y: Math.floor((((document.body.clientWidth/1920)*1080) - 150) * Math.random())}
+          pokemonCoords: {
+            x: Math.floor((document.body.clientWidth - 150) * Math.random()),
+            y: 660
+            // y: Math.floor(((150 - 150) * Math.random()))
+          }
         }
       })
-    }, 500);
+      setPokemonReady(true)
+    }, 1000);
   }
 
   useEffect(() => {
-    if (pokemon) {
+    if (pokemon && pokemonReady) {
+      console.log(pokemon)
       const {x, y} = pokemon.pokemonCoords;
       const pa = {
         xMin: x,
@@ -116,35 +157,74 @@ const WebcamCapture = () => {
       const [[xr1, yr1], [xr2, yr2]] = rightHand;
 
       const hla = {
-        xMin: xl1,
-        xMax: xl2,
-        yMin: yl1,
-        yMax: yl2,
+        xMin: (xl1) * factorWidth,
+        xMax: (xl2) * factorWidth,
+        yMin: (yl1) * factorWidth,
+        yMax: (yl2) * factorWidth,
       }
       const hra = {
-        xMin: xr1,
-        xMax: xr2,
-        yMin: yr1,
-        yMax: yr2,
+        xMin: (xr1) * factorWidth,
+        xMax: (xr2) * factorWidth,
+        yMin: (yr1) * factorWidth,
+        yMax: (yr2) * factorWidth,
       }
+      if(
+        ((pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
+      || (pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin)
+      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
+      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin))
 
+       ||((pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
+       || (pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin)
+       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
+       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin))
+      ){
+        setPokemonReady(false)
+        console.log(hla,hra,pa)
+      }
       setCaught(() =>
-      ((hla.xMax > pa.xMax && pa.xMax > hla.xMin && hla.yMax > pa.yMax && pa.yMax > hla.yMin)
-      || (hla.xMax > pa.xMax && pa.xMax > hla.xMin && hla.yMax > pa.yMin && pa.yMin > hla.yMin)
-      || (hla.xMax > pa.xMin && pa.xMin > hla.xMin && hla.yMax > pa.yMax && pa.yMax > hla.yMin)
-      || (hla.xMax > pa.xMin && pa.xMin > hla.xMin && hla.yMax > pa.yMin && pa.yMin > hla.yMin))
+      ((pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
+      || (pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin)
+      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
+      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin))
 
-       || ((hra.xMax > pa.xMax && pa.xMax > hra.xMin && hra.yMax > pa.yMax && pa.yMax > hra.yMin)
-       || (hra.xMax > pa.xMax && pa.xMax > hra.xMin && hra.yMax > pa.yMin && pa.yMin > hra.yMin)
-       || (hra.xMax > pa.xMin && pa.xMin > hra.xMin && hra.yMax > pa.yMax && pa.yMax > hra.yMin)
-       || (hra.xMax > pa.xMin && pa.xMin > hra.xMin && hra.yMax > pa.yMin && pa.yMin > hra.yMin))
+       ||((pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
+       || (pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin)
+       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
+       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin))
       )
     }
   }, [pokemon, coords])
-
+  // 0: (2) [252, 482]
+  // 1: (2) [268, 514]
   const [leftHand, rightHand] = coords.result;
   const [[xl1, yl1], [xl2, yl2]] = leftHand;
   const [[xr1, yr1], [xr2, yr2]] = rightHand;
+
+  const hla = {
+    xMin: (xl1) * factorWidth,
+    xMax: (xl2) * factorWidth,
+    yMin: (yl1) * factorWidth,
+    yMax: (yl2) * factorWidth,
+  }
+  const hra = {
+    xMin: (xr1) * factorWidth,
+    xMax: (xr2) * factorWidth,
+    yMin: (yr1) * factorWidth,
+    yMax: (yr2) * factorWidth,
+  }
+  // const hla = {
+  //   xMin: (10) * factorWidth,
+  //   xMax: (630 * 1.6875) * factorWidth,
+  //   yMin: (10) * factorWidth,
+  //   yMax: (470 * 1.6875) * factorWidth,
+  // }
+  // const hra = {
+  //   xMin: (200) * factorWidth,
+  //   xMax: (500) * factorWidth,
+  //   yMin: (200) * factorWidth,
+  //   yMax: (500) * factorWidth,
+  // }
 
   useEffect(() => {
     if (caught){
@@ -236,17 +316,24 @@ const WebcamCapture = () => {
           sx={{
             position: 'relative',
             width: '100%',
-            height: `${(document.body.clientWidth/1920)*1080}px`,
-            bgcolor: 'blanchedalmond',
+            // height: `${(document.body.clientWidth/1920)*1080}px`,
+            height: `${480 * 1.6875}px`,
+            bgcolor: '#000',
+            overflow: 'hidden',
+            // background: 'url(http://localhost:8090/vid)',
+            // backgroundRepeat: 'no-repeat',
+            // backgroundPosition: 'center',
+            // backgroundSize: 'cover',
           }}
         >
+          <img ref={imgRef} style={{width: '100%', height: '100%'}}  src="http://localhost:8090/vid" alt="" />
           <Box
             sx={{
               position: 'absolute',
-              width: `${xl2 - xl1}px`,
-              height: `${yl2 - yl1}px`,
-              top: `${yl1}px`,
-              left: `${xl1}px`,
+              width: `${hla.xMax - hla.xMin}px`,
+              height: `${hla.yMax - hla.yMin}px`,
+              top: `${hla.yMin}px`,
+              left: `${hla.xMin}px`,
               border: '5px solid #fff',
               transition: '.5s'
             }}
@@ -254,10 +341,10 @@ const WebcamCapture = () => {
           <Box
             sx={{
               position: 'absolute',
-              width: `${xr2 - xr1}px`,
-              height: `${yr2 - yr1}px`,
-              top: `${yr1}px`,
-              left: `${xr1}px`,
+              width: `${hra.xMax - hra.xMin}px`,
+              height: `${hra.yMax - hra.yMin}px`,
+              top: `${hra.yMin}px`,
+              left: `${hra.xMin}px`,
               border: '5px solid #fff',
               transition: '.5s'
             }}
@@ -287,14 +374,14 @@ const WebcamCapture = () => {
               left: '40%',
             }}
           /> */}
-          <Webcam
+          {/* <Webcam
             audio={false}
             height={'100%'}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             width={'100%'}
             videoConstraints={videoConstraints}
-          />
+          /> */}
         </Box>
         {/* <button onClick={capture}>Capture photo</button> */}
       </Box>

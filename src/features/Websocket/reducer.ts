@@ -9,16 +9,16 @@ export const messageSlice = createSlice({
     connectedAction: () => {},
     disconnectedAction: () => {},
     messageAction: (state, action: PayloadAction<Message>) => {
-      // state.message = action.payload;
-      console.log(state.message);
-      console.log(action.payload);
+      state.message = action.payload;
+      // console.log(state.message);
+      // console.log(action.payload);
     },
     storeMessageAction: (state, action: PayloadAction<Message>) => {
       state.message = action.payload;
     },
     sendMessageAction: (state, action: PayloadAction<any>) => {
       state.message = action.payload;
-      console.log(state.message);
+      // console.log(state.message);
     },
     messageAction2: () => {
       // just for interating UI by mouse

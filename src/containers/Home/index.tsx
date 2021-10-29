@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Box, styled, Typography } from '@mui/material';
+import { Box, styled, Typography} from '@mui/material';
 import { sendMessageAction } from '../../features/Websocket/reducer';
 
 // import { useMediapipe } from '../../components/common/useMediapipe';
@@ -33,6 +33,21 @@ const Home: React.FC = () => {
     if (second === 0){
       dispatch(
         sendMessageAction({
+          to: 'video',
+          message: {
+            '': '',
+          },
+        })
+      )
+      dispatch(sendMessageAction({
+        to: 'pose',
+        message: {
+          cmd: 'change_mode',
+          mode: 'hands_detect',
+        }
+      }));
+      dispatch(
+        sendMessageAction({
           to: 'pose',
           message: {
             cmd: 'hands_detect_start',
@@ -61,12 +76,13 @@ const Home: React.FC = () => {
         <Box>
           <Countdown>
             <Typography className="number">{second}</Typography>
+            {/* <p>This is Home</p>
+            <a onClick={() => history.push("/demo")}>Go to Child page</a> */}
           </Countdown>
         </Box>
       </Box>
     </>
-    // <p>This is Home</p>
-    // <Link to="/demo">Go to Child page</Link>
+
   );
 };
 
