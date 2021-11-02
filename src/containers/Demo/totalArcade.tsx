@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import pokemonImg1 from './assets/pokemon_PNG112.png';
 import pokemonImg2 from './assets/pokemon_PNG125.png';
 import pokemonImg3 from './assets/pokemon_PNG150.png';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RootState } from '../../features';
+import { useHistory } from 'react-router';
+import { sendMessageAction } from '../../features/Websocket/reducer';
 
 const TotalBox = styled('div')({
   position: 'absolute',
@@ -48,7 +51,22 @@ const TotalBox = styled('div')({
   },
 });
 const TotalArcade = () => {
+  const history = useHistory()
+  const dispatch = useDispatch()
   const { points } = useSelector((state: RootState) => state.arcade);
+  useEffect(() => {
+    dispatch(
+      sendMessageAction({
+        to: 'pose',
+        message: {
+          cmd: 'hands_detect_stop',
+        },
+      })
+    )
+    setTimeout(() => {
+      history.push('/')
+    }, 5000);
+  }, [])
   return (
     <>
       <Box

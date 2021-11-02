@@ -21,7 +21,7 @@ const StatusBar = styled('div')({
   position: 'relative',
   // right: 0,
   // top: '-150px',
-  width: '100%',
+  width: `${640 * 1.6875}px`,
 
   height: '150px',
   // borderRadius: '50%',
@@ -127,7 +127,7 @@ const WebcamCapture = () => {
         return {
           pokemonImage: pokemonList[Math.round(Math.random() * (pokemonList.length - 1))],
           pokemonCoords: {
-            x: Math.floor((document.body.clientWidth - 150) * Math.random()),
+            x: Math.floor((640 * 1.6875 - 150) * Math.random()),
             y: 660
             // y: Math.floor(((150 - 150) * Math.random()))
           }
@@ -315,7 +315,7 @@ const WebcamCapture = () => {
         <Box
           sx={{
             position: 'relative',
-            width: '100%',
+            width: `${640 * 1.6875}px`,
             // height: `${(document.body.clientWidth/1920)*1080}px`,
             height: `${480 * 1.6875}px`,
             bgcolor: '#000',
@@ -335,7 +335,7 @@ const WebcamCapture = () => {
               top: `${hla.yMin}px`,
               left: `${hla.xMin}px`,
               border: '5px solid #fff',
-              transition: '.5s'
+              // transition: '.05s'
             }}
           />
           <Box
@@ -346,7 +346,7 @@ const WebcamCapture = () => {
               top: `${hra.yMin}px`,
               left: `${hra.xMin}px`,
               border: '5px solid #fff',
-              transition: '.5s'
+              // transition: '.05s'
             }}
           />
           <Box

@@ -108,7 +108,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denisTrubicin93/game-boiler.git"
+    "url": "git+http://github.com/xenera-jp/game-arcade.git"
   },
   "author": {
     "name": "gameArcade",
@@ -117,7 +117,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "git+https://github.com/denisTrubicin93/game-boiler/issues"
+    "url": "https://github.com/xenera-jp/game-arcade/issues"
   },
   "keywords": [
     "electron",
