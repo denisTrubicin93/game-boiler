@@ -8,9 +8,9 @@ import { setPoints } from '../../features/Arcade/reducer';
 import { Box, styled, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { RootState } from 'features';
-import pokemonImg1 from './assets/pokemon_PNG112.png';
-import pokemonImg2 from './assets/pokemon_PNG125.png';
-import pokemonImg3 from './assets/pokemon_PNG150.png';
+import violetSphereImg from './assets/violet-sphere.png';
+import blueFireImg from './assets/blueFire.gif';
+import fireworkImg from './assets/fireworknoloop.gif';
 
 // const videoConstraints = {
 //   width: 1920,
@@ -75,8 +75,9 @@ const WebcamCapture = () => {
     // const imageSrc = webcamRef.current.getScreenshot();
   }, [imgRef]);
   const { coords, points } = useSelector((state: RootState) => state.arcade);
-  const [pokemon, setPokemon] = useState<null | any>(null);
-  const [pokemonReady, setPokemonReady] = useState(false)
+  const [firework, setFirework] = useState<null | any>(null);
+  const [playFirework, setPlayFirework] = useState(false)
+  const [fireworkReady, setFireworkReady] = useState(false)
   const [caught, setCaught] = useState<null | any>(null);
   const [seconds, setSeconds] = useState(30);
   // const [base64, setBase64] = useState('');
@@ -111,41 +112,41 @@ const WebcamCapture = () => {
   //   // }
   // }, [base64])
 
-  const [pokemonOpacity, setPokemonOpacity] = useState<null | any>(1);
+  const [fireworkOpacity, setFireworkOpacity] = useState<null | any>(1);
 
-  const pokemonList = [
-    pokemonImg1,
-    pokemonImg2,
-    pokemonImg3
-  ]
-
-  const changePokemon = () => {
-    setPokemonOpacity(0)
+  const changeFirework = () => {
+    setPlayFirework(true)
     setTimeout(() => {
-      setPokemonOpacity(1)
-      setPokemon(() => {
-        return {
-          pokemonImage: pokemonList[Math.round(Math.random() * (pokemonList.length - 1))],
-          pokemonCoords: {
-            x: Math.floor((640 * 1.6875 - 150) * Math.random()),
-            y: 660
-            // y: Math.floor(((150 - 150) * Math.random()))
+      setPlayFirework(false)
+      setFireworkOpacity(0)
+      setTimeout(() => {
+        setFireworkOpacity(1)
+        setFirework(() => {
+          return {
+            fireworkImage: violetSphereImg,
+            fireworkCoords: {
+              // x: 1000,
+              x: Math.floor((640 * 1.6875 - 200) * Math.random()),
+              y: 660
+              // y: Math.floor(((150 - 150) * Math.random()))
+            }
           }
-        }
-      })
-      setPokemonReady(true)
-    }, 1000);
+        })
+        setFireworkReady(true)
+      }, 1000);
+    }, 2000);
+
   }
 
   useEffect(() => {
-    if (pokemon && pokemonReady) {
-      console.log(pokemon)
-      const {x, y} = pokemon.pokemonCoords;
-      const pa = {
+    if (firework && fireworkReady) {
+      console.log(firework)
+      const {x, y} = firework.fireworkCoords;
+      const fa = {
         xMin: x,
-        xMax: x + 150,
+        xMax: x + 50,
         yMin: y,
-        yMax: y + 150,
+        yMax: y + 50,
       }
 
       // const [hands] = coords.result;
@@ -169,32 +170,32 @@ const WebcamCapture = () => {
         yMax: (yr2) * factorWidth,
       }
       if(
-        ((pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
-      || (pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin)
-      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
-      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin))
+        ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+      || (fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin)
+      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin))
 
-       ||((pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
-       || (pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin)
-       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
-       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin))
+       ||((fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+       || (fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin)
+       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin))
       ){
-        setPokemonReady(false)
-        console.log(hla,hra,pa)
+        setFireworkReady(false)
+        console.log(hla,hra,fa)
       }
       setCaught(() =>
-      ((pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
-      || (pa.xMax > hla.xMax && hla.xMax > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin)
-      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMax && hla.yMax > pa.yMin)
-      || (pa.xMax > hla.xMin && hla.xMin > pa.xMin && pa.yMax > hla.yMin && hla.yMin > pa.yMin))
+      ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+      || (fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin)
+      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin))
 
-       ||((pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
-       || (pa.xMax > hra.xMax && hra.xMax > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin)
-       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMax && hra.yMax > pa.yMin)
-       || (pa.xMax > hra.xMin && hra.xMin > pa.xMin && pa.yMax > hra.yMin && hra.yMin > pa.yMin))
+       ||((fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+       || (fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin)
+       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin))
       )
     }
-  }, [pokemon, coords])
+  }, [firework, coords])
   // 0: (2) [252, 482]
   // 1: (2) [268, 514]
   const [leftHand, rightHand] = coords.result;
@@ -228,7 +229,7 @@ const WebcamCapture = () => {
 
   useEffect(() => {
     if (caught){
-      changePokemon();
+      changeFirework();
       dispatch(setPoints(points + 2));
       setCaught(() => false);
     }
@@ -254,7 +255,7 @@ const WebcamCapture = () => {
   }, [seconds]);
 
   useEffect(() => {
-    changePokemon()
+    changeFirework()
     // const secondTimer = setInterval(() => {
     //     setSeconds(seconds - 1);
     // }, 1000);
@@ -330,40 +331,64 @@ const WebcamCapture = () => {
           <Box
             sx={{
               position: 'absolute',
-              width: `${hla.xMax - hla.xMin}px`,
-              height: `${hla.yMax - hla.yMin}px`,
+              width: `${(hla.xMax - hla.xMin) * 3}px`,
+              height: `${(hla.yMax - hla.yMin) * 3}px`,
               top: `${hla.yMin}px`,
               left: `${hla.xMin}px`,
-              border: '5px solid #fff',
-              // transition: '.05s'
+              transform: 'translate(-50%, -50%)',
+              // border: '5px solid #fff',
+              transition: '.05s'
             }}
-          />
+          >
+            <img src={blueFireImg} alt="" style={{width: "100%", height: '100%'}} />
+          </Box>
           <Box
             sx={{
               position: 'absolute',
-              width: `${hra.xMax - hra.xMin}px`,
-              height: `${hra.yMax - hra.yMin}px`,
+              width: `${(hra.xMax - hra.xMin) * 3}px`,
+              height: `${(hra.yMax - hra.yMin) * 3}px`,
               top: `${hra.yMin}px`,
               left: `${hra.xMin}px`,
-              border: '5px solid #fff',
-              // transition: '.05s'
+              transform: 'translate(-50%, -50%)',
+              // border: '5px solid #fff',
+              transition: '.05s'
             }}
-          />
+          >
+            <img src={blueFireImg} alt="" style={{width: "100%", height: '100%'}} />
+          </Box>
           <Box
           sx={{
             position: 'absolute',
-            width: '150px',
-            height: '150px',
-            top: `${pokemon?.pokemonCoords.y || 0}px`,
-            left: `${pokemon?.pokemonCoords.x || 0}px`,
-            background: `url(${pokemon?.pokemonImage || ''}) no-repeat center`,
+            width: '50px',
+            height: '50px',
+            top: `${firework?.fireworkCoords.y || 0}px`,
+            left: `${firework?.fireworkCoords.x || 0}px`,
+            background: `url(${firework?.fireworkImage || ''}) no-repeat center`,
             backgroundSize: 'contain',
-            visibility: !!pokemon ? 'visible' : 'hidden',
-            opacity: pokemonOpacity,
-            transition: 'opacity .5s'
+            visibility: !!firework ? 'visible' : 'hidden',
+            opacity: fireworkOpacity,
+            transition: 'opacity .5s',
+            zIndex: '10'
           }}
           >
-            {/* <img style={{width:'100%'}} src={PokemonImg1} alt="" /> */}
+            {/* <img style={{width:'100%', transform: 'translateY(-70%)', zIndex: 1}} src={fireworkImg} alt="" /> */}
+          </Box>
+          <Box
+          sx={{
+            position: 'absolute',
+            // width: '150px',
+            // height: '150px',
+            top: `${firework?.fireworkCoords.y || 0}px`,
+            left: `${firework?.fireworkCoords.x || 0}px`,
+            // background: `url(${fireworkImg}) no-repeat center`,
+            // backgroundSize: 'contain',
+            visibility: !!firework ? 'visible' : 'hidden',
+            opacity: fireworkOpacity,
+            transition: 'opacity .5s',
+            zIndex: '1'
+          }}
+          >
+            <img style={{ width:'200px', transform: 'translate(-73px, -80%)', zIndex: 1}} src={playFirework ? fireworkImg : ''} alt="" />
           </Box>
           {/* <InsertEmoticonIcon
             sx={{

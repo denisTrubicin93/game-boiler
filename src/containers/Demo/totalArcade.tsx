@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
-import pokemonImg1 from './assets/pokemon_PNG112.png';
-import pokemonImg2 from './assets/pokemon_PNG125.png';
-import pokemonImg3 from './assets/pokemon_PNG150.png';
+import violetSphereImg from './assets/violet-sphere.png';
+import fireworkImg from './assets/firework.gif';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { RootState } from '../../features';
@@ -26,14 +25,14 @@ const TotalBox = styled('div')({
     lineHeight: '300px',
     textAlign: 'center',
   },
-  '& .pockemonImages': {
+  '& .fireWork': {
     position: 'absolute',
     left: '50%',
     bottom: '-100px',
     transform: 'translateX(-50%)',
     width: '100%',
   },
-  '& .pockemonImages img': {
+  '& .fireWork img': {
     width: '200px',
     height: '200px',
     position: 'absolute',
@@ -41,12 +40,13 @@ const TotalBox = styled('div')({
     transform: 'translateX(-50%)',
     zIndex: '2',
     '&:first-child': {
-      zIndex: '1',
-      left: '0%',
+      width: '50px',
+      height: '50px',
+      top: '160px',
+      left: '49%'
     },
     '&:last-child': {
       zIndex: '1',
-      left: '80%',
     },
   },
 });
@@ -83,10 +83,9 @@ const TotalArcade = () => {
         <Box>
           <TotalBox>
             <Typography className="total-point">{ points }</Typography>
-            <Box className="pockemonImages">
-              <img src={pokemonImg1} alt="" />
-              <img src={pokemonImg2} alt="" />
-              <img src={pokemonImg3} alt="" />
+            <Box className="fireWork">
+              <img src={violetSphereImg} alt="" />
+              <img src={fireworkImg} alt="" />
             </Box>
           </TotalBox>
         </Box>

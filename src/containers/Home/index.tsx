@@ -33,9 +33,9 @@ const Home: React.FC = () => {
     if (second === 0){
       dispatch(
         sendMessageAction({
-          to: 'video',
+          to: 'pose',
           message: {
-            '': '',
+            cmd: 'foot_stop',
           },
         })
       )

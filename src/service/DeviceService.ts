@@ -307,10 +307,11 @@ export class DeviceService {
       const { xaxis } = trackingSkeleton[0];
       const { distance } = trackingSkeleton[0];
 
-      if (distance === 0 || !distance || !xaxis) {
-        // console.debug('ignore values');
-        return;
-      }
+      // if (distance === 0 || !distance || !xaxis) {
+      //   // console.debug('ignore values');
+      //   // eslint-disable-next-line consistent-return
+      //   return;
+      // }
 
       // console.log(distance)
       if (this.isTargetZone(xaxis, distance)) {
