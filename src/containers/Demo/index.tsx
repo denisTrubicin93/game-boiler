@@ -158,16 +158,16 @@ const WebcamCapture = () => {
       const [[xr1, yr1], [xr2, yr2]] = rightHand;
 
       const hla = {
-        xMin: (xl1) * factorWidth,
-        xMax: (xl2) * factorWidth,
-        yMin: (yl1) * factorWidth,
-        yMax: (yl2) * factorWidth,
+        xMin: 1080 - (xl1 * factorWidth),
+        xMax: 1080 - (xl2 * factorWidth),
+        yMin: (yl1 * factorWidth),
+        yMax: (yl2 * factorWidth),
       }
       const hra = {
-        xMin: (xr1) * factorWidth,
-        xMax: (xr2) * factorWidth,
-        yMin: (yr1) * factorWidth,
-        yMax: (yr2) * factorWidth,
+        xMin: 1080 - (xr1 * factorWidth),
+        xMax: 1080 - (xr2 * factorWidth),
+        yMin: (yr1 * factorWidth),
+        yMax: (yr2 * factorWidth),
       }
       if(
         ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
@@ -203,16 +203,16 @@ const WebcamCapture = () => {
   const [[xr1, yr1], [xr2, yr2]] = rightHand;
 
   const hla = {
-    xMin: (xl1) * factorWidth,
-    xMax: (xl2) * factorWidth,
-    yMin: (yl1) * factorWidth,
-    yMax: (yl2) * factorWidth,
+    xMin: 1080 - (xl1 * factorWidth),
+    xMax: 1080 - (xl2 * factorWidth),
+    yMin: (yl1 * factorWidth),
+    yMax: (yl2 * factorWidth),
   }
   const hra = {
-    xMin: (xr1) * factorWidth,
-    xMax: (xr2) * factorWidth,
-    yMin: (yr1) * factorWidth,
-    yMax: (yr2) * factorWidth,
+    xMin: 1080 - (xr1 * factorWidth),
+    xMax: 1080 - (xr2 * factorWidth),
+    yMin: (yr1 * factorWidth),
+    yMax: (yr2 * factorWidth),
   }
   // const hla = {
   //   xMin: (10) * factorWidth,
@@ -327,7 +327,7 @@ const WebcamCapture = () => {
             // backgroundSize: 'cover',
           }}
         >
-          <img ref={imgRef} style={{width: '100%', height: '100%'}}  src="http://localhost:8090/vid" alt="" />
+          <img ref={imgRef} style={{width: '100%', height: '100%', transform: 'rotateY(180deg)'}}  src="http://localhost:8090/vid" alt="" />
           <Box
             sx={{
               position: 'absolute',
