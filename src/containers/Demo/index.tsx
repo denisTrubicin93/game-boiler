@@ -9,8 +9,9 @@ import { Box, styled, Typography } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { RootState } from 'features';
 import violetSphereImg from './assets/violet-sphere.png';
-import blueFireImg from './assets/blueFire.gif';
-import fireworkImg from './assets/fireworknoloop.gif';
+import redSphereImg from './assets/ball-red.png';
+import blueFireImg from './assets/blueFire2.gif';
+import fireworkImg from './assets/firework-no-loop.gif';
 
 // const videoConstraints = {
 //   width: 1920,
@@ -34,9 +35,9 @@ const StatusBar = styled('div')({
     padding:'10px 30px',
     borderRadius: '40px',
     border: '10px solid #000',
-    background: '#ff4242', //#deeb14 #ff4242
+    background: '#2dd141', //#deeb14 #ff4242
     fontSize: '50px',
-    animation: 'timerColor 30s linear',
+
     '& .timerIcon': {
       fontSize: '65px',
       verticalAlign: 'bottom',
@@ -67,7 +68,6 @@ const WebcamCapture = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const imgRef: any = useRef();
-  // const webcamRef = React.useRef(null);
 
   const factorWidth = 1.6875;
   useEffect(() => {
@@ -80,47 +80,17 @@ const WebcamCapture = () => {
   const [fireworkReady, setFireworkReady] = useState(false)
   const [caught, setCaught] = useState<null | any>(null);
   const [seconds, setSeconds] = useState(30);
-  // const [base64, setBase64] = useState('');
-
-
-  // const capture = async () => {
-  //   const img = imgRef?.current as any;
-  //   // let base64: string = '';
-  //   if (img && img.src) {
-  //     const canvas = document.createElement('canvas');
-  //     canvas.width = img.width;
-  //     canvas.height = img.height;
-  //     const ctx = canvas.getContext('2d');
-  //     ctx!.drawImage(img,0,0,img.width,img.height);
-  //     // const dataURL = canvas.toDataURL()
-  //     console.log('source', ctx)
-  //   }
-  // }
-  // console.log(capture())
-  // useEffect(() => {
-  //   if(img){
-  //     console.log()
-  //     const canvas = document.createElement('canvas')
-  //     // canvas.width = img.
-  //   }
-  //   // const getFrameTimer = setInterval(() => {
-
-  //   //   console.log('image', img);
-  //   // },24)
-  //   // return () => {
-  //   //   clearInterval(getFrameTimer);
-  //   // }
-  // }, [base64])
+  const [startGame, setStartGame] = useState(false);
 
   const [fireworkOpacity, setFireworkOpacity] = useState<null | any>(1);
 
-  const changeFirework = () => {
+  const changeFirework = (time) => {
     setPlayFirework(true)
     setTimeout(() => {
-      setPlayFirework(false)
       setFireworkOpacity(0)
       setTimeout(() => {
         setFireworkOpacity(1)
+        setPlayFirework(false)
         setFirework(() => {
           return {
             fireworkImage: violetSphereImg,
@@ -134,67 +104,78 @@ const WebcamCapture = () => {
         })
         setFireworkReady(true)
       }, 1000);
-    }, 2000);
+    }, time);
 
   }
 
   useEffect(() => {
-    if (firework && fireworkReady) {
-      console.log(firework)
-      const {x, y} = firework.fireworkCoords;
-      const fa = {
-        xMin: x,
-        xMax: x + 50,
-        yMin: y,
-        yMax: y + 50,
-      }
 
-      // const [hands] = coords.result;
-      // const [leftHand, rightHand] = hands;
-      // const [[xl1, yl1], [xl2, yl2]]: any[] = leftHand;
-      // const [[xr1, yr1], [xr2, yr2]]: any[] = rightHand;
       const [leftHand, rightHand] = coords.result;
       const [[xl1, yl1], [xl2, yl2]] = leftHand;
       const [[xr1, yr1], [xr2, yr2]] = rightHand;
 
       const hla = {
-        xMin: 1080 - (xl1 * factorWidth),
-        xMax: 1080 - (xl2 * factorWidth),
+        xMax: 1080 - (xl1 * factorWidth),
+        xMin: 1080 - (xl2 * factorWidth),
         yMin: (yl1 * factorWidth),
         yMax: (yl2 * factorWidth),
       }
       const hra = {
-        xMin: 1080 - (xr1 * factorWidth),
-        xMax: 1080 - (xr2 * factorWidth),
+        xMax: 1080 - (xr1 * factorWidth),
+        xMin: 1080 - (xr2 * factorWidth),
         yMin: (yr1 * factorWidth),
         yMax: (yr2 * factorWidth),
       }
-      if(
-        ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
-      || (fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin)
-      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
-      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin))
-
-       ||((fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
-       || (fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin)
-       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
-       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin))
-      ){
-        setFireworkReady(false)
-        console.log(hla,hra,fa)
+      const hlaCenter = {
+        x:hla.xMax - (hla.xMax - hla.xMin)/2,
+        y:hla.yMax - (hla.yMax - hla.yMin)/2,
       }
-      setCaught(() =>
-      ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
-      || (fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin)
-      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
-      || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin))
+      const hraCenter = {
+        x: hra.xMax - (hra.xMax - hra.xMin)/2,
+        y: hra.yMax - (hra.yMax - hra.yMin)/2,
+      }
+      console.log(hraCenter, hlaCenter)
+      if (firework && fireworkReady) {
+        const {x, y} = firework.fireworkCoords;
+        const fa = {
+          xMin: x,
+          xMax: x + 50,
+          yMin: y,
+          yMax: y + 50,
+        }
+        if(
+          ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+        || (fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin)
+        || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+        || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin))
 
-       ||((fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
-       || (fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin)
-       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
-       || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin))
-      )
-    }
+        ||((fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+        || (fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin)
+        || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+        || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin))
+        ){
+          setFireworkReady(false)
+          // console.log(hla,hra,fa)
+        }
+        setCaught(() =>
+        ((fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+        || (fa.xMax > hla.xMax && hla.xMax > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin)
+        || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMax && hla.yMax > fa.yMin)
+        || (fa.xMax > hla.xMin && hla.xMin > fa.xMin && fa.yMax > hla.yMin && hla.yMin > fa.yMin))
+
+        ||((fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+        || (fa.xMax > hra.xMax && hra.xMax > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin)
+        || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMax && hra.yMax > fa.yMin)
+        || (fa.xMax > hra.xMin && hra.xMin > fa.xMin && fa.yMax > hra.yMin && hra.yMin > fa.yMin))
+        )
+      }
+      if(hraCenter.x < 400 && hraCenter.x > 200 && hlaCenter.x < 800 && hlaCenter.x > 600 &&
+        hraCenter.y < 600 && hraCenter.y > 400 && hlaCenter.y < 600 && hlaCenter.y > 400 && !startGame) {
+        changeFirework(0)
+        setStartGame(true)
+        setSeconds(() => seconds - 1)
+      }
+
   }, [firework, coords])
   // 0: (2) [252, 482]
   // 1: (2) [268, 514]
@@ -203,14 +184,14 @@ const WebcamCapture = () => {
   const [[xr1, yr1], [xr2, yr2]] = rightHand;
 
   const hla = {
-    xMin: 1080 - (xl1 * factorWidth),
-    xMax: 1080 - (xl2 * factorWidth),
+    xMax: 1080 - (xl1 * factorWidth),
+    xMin: 1080 - (xl2 * factorWidth),
     yMin: (yl1 * factorWidth),
     yMax: (yl2 * factorWidth),
   }
   const hra = {
-    xMin: 1080 - (xr1 * factorWidth),
-    xMax: 1080 - (xr2 * factorWidth),
+    xMax: 1080 - (xr1 * factorWidth),
+    xMin: 1080 - (xr2 * factorWidth),
     yMin: (yr1 * factorWidth),
     yMax: (yr2 * factorWidth),
   }
@@ -228,19 +209,21 @@ const WebcamCapture = () => {
   // }
 
   useEffect(() => {
-    if (caught){
-      changeFirework();
+    if (caught && startGame){
+      changeFirework(2000);
       dispatch(setPoints(points + 2));
       setCaught(() => false);
     }
   }, [caught])
 
   useEffect(() => {
+    if(!startGame) return
     if(seconds > 0){
       setTimeout(() => {
         setSeconds(seconds - 1)
       }, 1000);
     }else{
+      setStartGame(false)
       dispatch(
         sendMessageAction({
           to: 'pose',
@@ -255,7 +238,7 @@ const WebcamCapture = () => {
   }, [seconds]);
 
   useEffect(() => {
-    changeFirework()
+    // changeFirework()
     // const secondTimer = setInterval(() => {
     //     setSeconds(seconds - 1);
     // }, 1000);
@@ -304,6 +287,7 @@ const WebcamCapture = () => {
       >
         <StatusBar>
           <Box className='timer' sx={{
+            animation: `${startGame ? 'timerColor 30s linear' : ''}`,
             background: '#ff4242'
           }}>
             00:{seconds.toString().length > 1 ? seconds : `0${seconds}`}
@@ -328,19 +312,65 @@ const WebcamCapture = () => {
           }}
         >
           <img ref={imgRef} style={{width: '100%', height: '100%', transform: 'rotateY(180deg)'}}  src="http://localhost:8090/vid" alt="" />
+          <Box sx={{
+            display: `${startGame ? 'none' : 'block'}`,
+            position: 'absolute',
+            top: '100px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'orange',
+            background: '#000000a3',
+            borderRadius: '50px',
+            padding: '20px',
+            textAlign: 'center',
+            transition: '0.5s',
+          }}>
+            <Typography sx={{
+              fontWeight: '800',
+              fontSize: '32px',
+            }}>Take the blue lights in your hands!</Typography>
+          </Box>
           <Box
             sx={{
               position: 'absolute',
-              width: `${(hla.xMax - hla.xMin) * 3}px`,
-              height: `${(hla.yMax - hla.yMin) * 3}px`,
-              top: `${hla.yMin}px`,
-              left: `${hla.xMin}px`,
+              width: `${ startGame ? (hla.xMax - hla.xMin) * 3 : 200}px`,
+              height: `${ startGame ? (hla.yMax - hla.yMin) * 3 : 300}px`,
+              top: `${ startGame ? hla.yMin : 400}px`,
+              left: `${ startGame ? hla.xMin : 700}px`,
               transform: 'translate(-50%, -50%)',
               // border: '5px solid #fff',
-              transition: '.05s'
+              transition: '.5s'
             }}
           >
             <img src={blueFireImg} alt="" style={{width: "100%", height: '100%'}} />
+          </Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              width: `${ startGame ? (hra.xMax - hra.xMin) * 3 : 200}px`,
+              height: `${ startGame ? (hra.yMax - hra.yMin) * 3 : 300}px`,
+              top: `${ startGame ? hra.yMin : 400}px`,
+              left: `${ startGame ? hra.xMin : 300}px`,
+              transform: 'translate(-50%, -50%)',
+              // border: '5px solid #fff',
+              transition: '.5s'
+            }}
+          >
+            <img src={blueFireImg} alt="" style={{width: "100%", height: '100%'}} />
+          </Box>
+
+          {/* <Box
+            sx={{
+              position: 'absolute',
+              width: `${ (hla.xMax - hla.xMin) * 3}px`,
+              height: `${(hla.yMax - hla.yMin) * 3}px`,
+              top: `${hla.yMin}px`,
+              left: `${ hla.xMax}px`,
+              transform: 'translate(-50%, -50%)',
+              border: '5px solid #fff',
+              transition: '.5s'
+            }}
+          >
           </Box>
           <Box
             sx={{
@@ -348,14 +378,14 @@ const WebcamCapture = () => {
               width: `${(hra.xMax - hra.xMin) * 3}px`,
               height: `${(hra.yMax - hra.yMin) * 3}px`,
               top: `${hra.yMin}px`,
-              left: `${hra.xMin}px`,
+              left: `${ hra.xMax}px`,
               transform: 'translate(-50%, -50%)',
-              // border: '5px solid #fff',
-              transition: '.05s'
+              border: '5px solid #fff',
+              transition: '.5s'
             }}
           >
-            <img src={blueFireImg} alt="" style={{width: "100%", height: '100%'}} />
-          </Box>
+          </Box> */}
+
           <Box
           sx={{
             position: 'absolute',
@@ -363,7 +393,7 @@ const WebcamCapture = () => {
             height: '50px',
             top: `${firework?.fireworkCoords.y || 0}px`,
             left: `${firework?.fireworkCoords.x || 0}px`,
-            background: `url(${firework?.fireworkImage || ''}) no-repeat center`,
+            background: `url(${playFirework ? redSphereImg : firework?.fireworkImage || ''}) no-repeat center`,
             backgroundSize: 'contain',
             visibility: !!firework ? 'visible' : 'hidden',
             opacity: fireworkOpacity,
